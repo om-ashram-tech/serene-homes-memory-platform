@@ -1,0 +1,128 @@
+
+/* HEADER */
+.top-header {
+  background: #7a0000;
+  color: white;
+  height: 60px;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+
+  position: fixed;      /* ✅ FIXED HEADER */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+
+
+
+/* LOGOUT BUTTON */
+.logout-btn {
+  background: white;
+  color: #7a0000;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.logout-btn:hover {
+  background: #ffe6e6;
+}
+
+/* MAIN LAYOUT */
+.layout-container {
+  display: flex;
+  min-height: calc(100vh - 60px);
+  background: #fffaf7;
+  margin-top: 60px;   /* ✅ push below fixed header */
+}
+
+
+/* SIDEBAR */
+.sidebar {
+  width: 230px;
+  background: #fff2f2;
+  padding: 22px 16px;
+  border-right: 1px solid #efdede;
+  position: sticky;
+  top: 60px;
+  height: calc(100vh - 60px);
+   position: sticky;
+  top: 60px;   /* below fixed header */
+  height: calc(100vh - 60px);
+}
+
+
+
+.sidebar button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.sidebar button:hover {
+  background: #ffe0e0;
+  border-color: #f2bcbc;
+}
+
+/* CONTENT */
+.content {
+  flex: 1;
+  padding: 6px 35px 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* SUBTEXT */
+.subtext {
+  margin-top: 6px;
+  margin-bottom: 28px;
+  color: #555;
+}
+
+/* STATS GRID */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  max-width: 950px;
+}
+
+/* STAT CARD */
+.stat-card {
+  background: white;
+  padding: 22px;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+  transition: 0.25s;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+}
+.stat-card.clickable {
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.stat-card.clickable:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+

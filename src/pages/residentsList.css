@@ -1,0 +1,215 @@
+/* FULL PAGE: center content */
+.reslist-page {
+  background: #fbf4ed;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding-top: 0;
+  width:100%;
+}
+
+/* INNER WRAPPER (everything aligned inside) */
+.reslist-inner {
+  width: 100%;
+  background: #f7f4f0;
+  padding: 0px 40px 40px;
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* HEADER */
+.reslist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Soft background behind "Residents" */
+.reslist-title-bg {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 12px 24px;
+  border-radius: 16px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+}
+
+.reslist-header h2 {
+  margin: 0;
+  font-size: 26px;
+  color: #7a0000;
+  font-weight: 700;
+}
+
+.add-btn {
+  background: #7a0000;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* SEARCH ROW */
+.search-row {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.search-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #d3cfc7;
+  font-size: 15px;
+  transition: 0.25s;
+}
+
+/* little animation when text present */
+.search-has-text {
+  box-shadow: 0 0 12px rgba(122, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+.search-btn {
+  background: #7a0000;
+  color: white;
+  padding: 0 18px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* SUGGESTION DROPDOWN */
+.suggestions-box {
+  position: absolute;
+  top: 44px;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 6px 0;
+  z-index: 10;
+}
+
+.suggestions-box li {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.suggestions-box li:hover {
+  background: #ffe6e6;
+}
+
+/* RESIDENT GRID */
+.residents-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+  max-width: 1100px;;
+}
+
+/* CARD */
+.resident-card {
+  background: #ffffff;
+  padding: 18px;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  transition: 0.25s;
+}
+
+.resident-card:hover {
+  transform: translateY(-4px);
+}
+
+.card-left {
+  flex-shrink: 0;
+}
+
+/* AVATAR */
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatar.placeholder {
+  background: #b72d2d;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+/* INFO */
+.card-info h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+/* ACTION BUTTONS */
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.view-btn,
+.manage-btn,
+.qr-btn,
+.delete-btn {
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.view-btn {
+  background: #e8e8ff;
+  color: #00008b;
+}
+
+.manage-btn {
+  background: #fff3d1;
+  color: #946200;
+}
+
+.qr-btn {
+  background: #ddeaff;
+  color: #0033aa;
+}
+
+.delete-btn {
+  background: #ffe3e3;
+  color: #8b0000;
+}
+
+/* EMPTY STATE */
+.empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #777;
+  font-size: 14px;
+}

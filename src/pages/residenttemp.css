@@ -1,0 +1,205 @@
+/* ================= PAGE WRAPPER ================= */
+.public-wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+  background: #fff7f1;
+  min-height: 100vh;
+
+  animation: fadeUp 0.4s ease;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.loading {
+  text-align: center;
+  margin-top: 3rem;
+  color: #666;
+}
+
+/* ================= PRIVACY BANNER ================= */
+.privacy-banner {
+  background: #fff3cd;
+  color: #856404;
+  padding: 12px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 14px;
+  margin-bottom: 18px;
+
+  transition: transform 0.2s ease;
+}
+
+.privacy-banner:hover {
+  transform: scale(1.01);
+}
+
+/* ================= PROFILE ================= */
+.profile-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
+
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.profile-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.12);
+}
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 12px;
+
+  transition: transform 0.25s ease;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.04);
+}
+
+.profile-card h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #7a0000;
+}
+
+.meta {
+  font-size: 14px;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* ================= ABOUT ================= */
+.about-card {
+  background: #f9f4ff;
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 18px;
+
+  transition: box-shadow 0.25s ease;
+}
+
+.about-card:hover {
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+.about-card h3 {
+  margin: 0 0 6px;
+  color: #4b3b73;
+}
+
+/* ================= TABS ================= */
+.tabs {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 18px;
+}
+
+.tabs button {
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #777;
+
+  transition: all 0.2s ease;
+}
+
+.tabs button:hover {
+  background: #f3eaea;
+}
+
+.tabs button.active {
+  background: #7a0000;
+  color: #fff;
+  border: none;
+  transform: scale(1.05);
+}
+
+/* ================= MEDIA GRID ================= */
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+/* Media item */
+.media-grid img,
+.media-grid video {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 14px;
+  background: #000;
+
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.media-grid img:hover,
+.media-grid video:hover {
+  transform: scale(1.03);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.18);
+}
+
+/* ================= STORIES ================= */
+.story-list {
+  display: grid;
+  gap: 14px;
+}
+
+.story-card {
+  background: #ffffff;
+  padding: 14px 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.story-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.story-card h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #4b3b73;
+}
+
+.story-card p {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #444;
+  line-height: 1.6;
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 600px) {
+  .media-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
