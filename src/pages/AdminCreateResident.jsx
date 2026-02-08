@@ -18,12 +18,11 @@ export default function CreateResident() {
     gender: "",
     roomNumber: "",
     shortBio: "",
-    profilePhotoUrl: "",
-    profilePhotoFile: null, // ✅ new
+    profilePhotoFile: null,
   });
 
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -46,7 +45,7 @@ export default function CreateResident() {
     if (!res.ok) throw new Error("Cloudinary upload failed");
 
     const data = await res.json();
-    return data.secure_url;
+    return data.secure_url; // ✅ RETURN STRING URL
   };
 
   const submitResident = async (e) => {
@@ -55,52 +54,59 @@ export default function CreateResident() {
     setLoading(true);
 
     try {
-      // ✅ BASIC VALIDATION    
-      if (!name || !age || !gender || !roomNumber) {
+      const {
+        firstName,
+        middleName,
+        lastName,
+        age,
+        gender,
+        roomNumber,
+        shortBio,
+        profilePhotoFile,
+      } = form;
+
+      // ✅ BASIC VALIDATION
+      if (!firstName || !lastName || !age || !gender || !roomNumber) {
         setError("Please fill all required fields.");
-        setLoading(false);
         return;
       }
 
       if (!profilePhotoFile) {
         setError("Profile photo is required.");
-        setLoading(false);
         return;
       }
 
-      // ✅ STEP 1: Upload profile photo to Cloudinary
-      const uploaded = await uploadToCloudinary(profilePhotoFile);
+      // ✅ Full name
+      const name = [firstName, middleName, lastName]
+        .filter(Boolean)
+        .join(" ");
 
-      if (!uploaded || !uploaded.url) {
-        throw new Error("Image upload failed");
-      }
+      // ✅ Upload image
+      const profilePhotoUrl = await uploadToCloudinary(profilePhotoFile);
 
-      // ✅ STEP 2: Send PURE JSON to Netlify Function
+      // ✅ Send PURE JSON
       await api.post("/residents", {
-        name: name.trim(),
+        name,
         age: Number(age),
         gender,
         roomNumber: roomNumber.trim(),
         shortBio: shortBio?.trim() || "",
-        profilePhotoUrl: uploaded.url, // 🔥 URL ONLY
+        profilePhotoUrl,
         extraPhotos: [],
       });
 
-      // ✅ SUCCESS
       alert("Resident created successfully ✅");
       navigate("/admin/residents");
-
     } catch (err) {
       console.error("Create resident failed:", err);
       setError(
         err?.response?.data?.message ||
-        "Failed to create resident. Please try again."
+          "Failed to create resident. Please try again."
       );
     } finally {
       setLoading(false);
     }
   };
-
 
   return (
     <AdminLayout>
@@ -111,7 +117,7 @@ export default function CreateResident() {
             Fill in the information below to create a new memory profile.
           </p>
 
-          <form onSubmit={submit} style={styles.form}>
+          <form onSubmit={submitResident} style={styles.form}>
             {/* NAME ROW */}
             <div style={styles.nameRow}>
               <div style={styles.field}>
@@ -121,7 +127,6 @@ export default function CreateResident() {
                   value={form.firstName}
                   onChange={handleChange}
                   required
-                  placeholder="First name"
                   style={styles.input}
                 />
               </div>
@@ -132,7 +137,6 @@ export default function CreateResident() {
                   name="middleName"
                   value={form.middleName}
                   onChange={handleChange}
-                  placeholder="Middle name"
                   style={styles.input}
                 />
               </div>
@@ -144,7 +148,6 @@ export default function CreateResident() {
                   value={form.lastName}
                   onChange={handleChange}
                   required
-                  placeholder="Last name"
                   style={styles.input}
                 />
               </div>
@@ -153,26 +156,25 @@ export default function CreateResident() {
             {/* AGE + GENDER */}
             <div style={styles.row}>
               <div style={styles.field}>
-                <label style={styles.label}>Age</label>
+                <label style={styles.label}>Age *</label>
                 <input
                   type="number"
                   name="age"
                   value={form.age}
                   onChange={handleChange}
-                  placeholder="78"
                   style={styles.input}
                 />
               </div>
 
               <div style={styles.field}>
-                <label style={styles.label}>Gender</label>
+                <label style={styles.label}>Gender *</label>
                 <select
                   name="gender"
                   value={form.gender}
                   onChange={handleChange}
                   style={styles.select}
                 >
-                  <option value="">Select gender</option>
+                  <option value="">Select</option>
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
                   <option value="Other">Other</option>
@@ -180,27 +182,25 @@ export default function CreateResident() {
               </div>
             </div>
 
-            {/* ROOM NUMBER */}
-            <label style={styles.label}>Room Number</label>
+            {/* ROOM */}
+            <label style={styles.label}>Room Number *</label>
             <input
               name="roomNumber"
               value={form.roomNumber}
               onChange={handleChange}
-              placeholder="Example: 204"
               style={styles.input}
             />
 
-            {/* SHORT BIO */}
+            {/* BIO */}
             <label style={styles.label}>Short Bio</label>
             <textarea
               name="shortBio"
               value={form.shortBio}
               onChange={handleChange}
-              placeholder="Write a short description..."
               style={styles.textarea}
             />
 
-            {/* PROFILE PHOTO UPLOAD */}
+            {/* PHOTO */}
             <label style={styles.label}>Profile Photo *</label>
             <input
               type="file"
@@ -211,7 +211,6 @@ export default function CreateResident() {
               }
             />
 
-            {/* PREVIEW */}
             {form.profilePhotoFile && (
               <img
                 src={URL.createObjectURL(form.profilePhotoFile)}
@@ -220,7 +219,7 @@ export default function CreateResident() {
               />
             )}
 
-            {message && <p style={styles.message}>{message}</p>}
+            {error && <p style={styles.message}>{error}</p>}
 
             <button type="submit" style={styles.submitBtn} disabled={loading}>
               {loading ? "Creating..." : "Create Resident"}
