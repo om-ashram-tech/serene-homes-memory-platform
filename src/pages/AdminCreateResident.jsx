@@ -49,38 +49,58 @@ export default function CreateResident() {
     return data.secure_url;
   };
 
-  const submit = async (e) => {
+  const submitResident = async (e) => {
     e.preventDefault();
+    setError("");
     setLoading(true);
-    setMessage("");
 
     try {
-      let photoUrl = form.profilePhotoUrl;
-
-      // ✅ upload if file selected
-      if (form.profilePhotoFile) {
-        photoUrl = await uploadToCloudinary(form.profilePhotoFile);
+      // ✅ BASIC VALIDATION    
+      if (!name || !age || !gender || !roomNumber) {
+        setError("Please fill all required fields.");
+        setLoading(false);
+        return;
       }
 
+      if (!profilePhotoFile) {
+        setError("Profile photo is required.");
+        setLoading(false);
+        return;
+      }
+
+      // ✅ STEP 1: Upload profile photo to Cloudinary
+      const uploaded = await uploadToCloudinary(profilePhotoFile);
+
+      if (!uploaded || !uploaded.url) {
+        throw new Error("Image upload failed");
+      }
+
+      // ✅ STEP 2: Send PURE JSON to Netlify Function
       await api.post("/residents", {
-        ...form,
-        profilePhotoUrl: photoUrl,
-        name: `${form.firstName} ${form.middleName} ${form.lastName}`.trim(),
-        age: form.age ? Number(form.age) : null,
+        name: name.trim(),
+        age: Number(age),
+        gender,
+        roomNumber: roomNumber.trim(),
+        shortBio: shortBio?.trim() || "",
+        profilePhotoUrl: uploaded.url, // 🔥 URL ONLY
+        extraPhotos: [],
       });
 
-      setMessage("Resident Created Successfully!");
+      // ✅ SUCCESS
+      alert("Resident created successfully ✅");
+      navigate("/admin/residents");
 
-      setTimeout(() => {
-        navigate("/admin/residents-list");
-      }, 800);
     } catch (err) {
-      console.error(err);
-      setMessage("Failed to create resident.");
+      console.error("Create resident failed:", err);
+      setError(
+        err?.response?.data?.message ||
+        "Failed to create resident. Please try again."
+      );
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
+
 
   return (
     <AdminLayout>
