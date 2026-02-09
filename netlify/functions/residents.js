@@ -3,7 +3,16 @@ const Resident = require("./models/Resident");
 const { v4: uuidv4 } = require("uuid");
 
 exports.handler = async (event) => {
-  await connectDB();
+  // ✅ Safe DB connection (prevents 502 crashes)
+  try {
+    await connectDB();
+  } catch (err) {
+    console.error("❌ MongoDB connection failed:", err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: "Database connection failed" }),
+    };
+  }
 
   const method = event.httpMethod;
   const qs = event.queryStringParameters || {};
@@ -31,7 +40,7 @@ exports.handler = async (event) => {
         body: JSON.stringify(resident),
       };
     } catch (err) {
-      console.error("Create error:", err);
+      console.error("❌ Create error:", err);
       return {
         statusCode: 500,
         body: JSON.stringify({ message: "Failed to create resident" }),
@@ -50,6 +59,7 @@ exports.handler = async (event) => {
         body: JSON.stringify(all),
       };
     } catch (err) {
+      console.error("❌ Fetch all error:", err);
       return {
         statusCode: 500,
         body: JSON.stringify({ message: "Failed to fetch residents" }),
@@ -76,6 +86,7 @@ exports.handler = async (event) => {
         body: JSON.stringify(resident),
       };
     } catch (err) {
+      console.error("❌ Fetch by ID error:", err);
       return {
         statusCode: 400,
         body: JSON.stringify({ message: "Invalid ID" }),
@@ -104,6 +115,7 @@ exports.handler = async (event) => {
         body: JSON.stringify(resident),
       };
     } catch (err) {
+      console.error("❌ Fetch by token error:", err);
       return {
         statusCode: 500,
         body: JSON.stringify({ message: "Failed to fetch resident" }),
@@ -130,7 +142,7 @@ exports.handler = async (event) => {
         body: JSON.stringify({ message: "Resident deleted" }),
       };
     } catch (err) {
-      console.error("Delete error:", err);
+      console.error("❌ Delete error:", err);
       return {
         statusCode: 500,
         body: JSON.stringify({ message: "Delete failed" }),
@@ -139,7 +151,7 @@ exports.handler = async (event) => {
   }
 
   // -------------------------------
-  // UPDATE BIO + PROFILE PHOTO (DP)
+  // UPDATE BIO + PROFILE PHOTO
   // -------------------------------
   if (method === "PUT") {
     try {
@@ -148,18 +160,25 @@ exports.handler = async (event) => {
       const updated = await Resident.findByIdAndUpdate(
         data.id,
         {
-          short_bio: data.short_bio,
-          profile_photo_url: data.profile_photo_url,
+          short_bio: data.shortBio,
+          profile_photo_url: data.profilePhotoUrl,
         },
         { new: true }
       );
+
+      if (!updated) {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ message: "Resident not found" }),
+        };
+      }
 
       return {
         statusCode: 200,
         body: JSON.stringify(updated),
       };
     } catch (err) {
-      console.error("Update error:", err);
+      console.error("❌ Update error:", err);
       return {
         statusCode: 500,
         body: JSON.stringify({ message: "Update failed" }),
@@ -167,6 +186,9 @@ exports.handler = async (event) => {
     }
   }
 
+  // -------------------------------
+  // FALLBACK
+  // -------------------------------
   return {
     statusCode: 405,
     body: JSON.stringify({ message: "Method Not Allowed" }),
