@@ -1,6 +1,5 @@
 const connectDB = require("./db");
 const Resident = require("./models/Resident");
-const { v4: uuidv4 } = require("uuid");
 
 exports.handler = async (event) => {
   // ✅ Safe DB connection (prevents 502 crashes)
@@ -24,6 +23,9 @@ exports.handler = async (event) => {
     try {
       const data = JSON.parse(event.body);
 
+      // ✅ Simple Netlify-safe token (no uuid)
+      const publicToken = Math.random().toString(36).substring(2, 10);
+
       const resident = await Resident.create({
         name: data.name,
         age: data.age,
@@ -32,7 +34,7 @@ exports.handler = async (event) => {
         room_number: data.roomNumber,
         profile_photo_url: data.profilePhotoUrl || "",
         extra_photos: data.extraPhotos || [],
-        public_token: uuidv4(), // ✅ QR token
+        public_token: publicToken,
       });
 
       return {

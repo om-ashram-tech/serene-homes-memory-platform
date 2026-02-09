@@ -1,25 +1,26 @@
 // /netlify/functions/models/Resident.js
 const mongoose = require("mongoose");
 
-const ResidentSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  age: Number,
+const ResidentSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
 
-  gender: { type: String, default: "" },
+    age: Number,
 
-  // Short biography from form
-  short_bio: { type: String, default: "" },
+    gender: { type: String, default: "" },
 
-  // Room number from form
-  room_number: { type: String, default: "" },
+    short_bio: { type: String, default: "" },
 
-  // Profile photo URL stored by form
-  profile_photo_url: { type: String, default: "" },
+    room_number: { type: String, default: "" },
 
-  // Permanent QR token
-  public_token: { type: String, unique: true },
+    profile_photo_url: { type: String, default: "" },
 
-  created_at: { type: Date, default: Date.now }
-});
+    extra_photos: [{ type: String }],
 
-module.exports = mongoose.model("Resident", ResidentSchema);
+    public_token: { type: String, unique: true },
+  },
+  { timestamps: true }
+);
+
+module.exports =
+  mongoose.models.Resident || mongoose.model("Resident", ResidentSchema);
