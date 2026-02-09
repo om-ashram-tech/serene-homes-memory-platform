@@ -55,32 +55,50 @@ export default function CreateResident() {
     setMessage("");
 
     try {
-      let photoUrl = form.profilePhotoUrl;
-
-      // ✅ upload if file selected
-      if (form.profilePhotoFile) {
-        photoUrl = await uploadToCloudinary(form.profilePhotoFile);
+      // ✅ Basic validation
+      if (!form.firstName || !form.lastName || !form.roomNumber) {
+        setMessage("Please fill all required fields.");
+        setLoading(false);
+        return;
       }
 
+      if (!form.profilePhotoFile) {
+        setMessage("Profile photo is required.");
+        setLoading(false);
+        return;
+      }
+
+      // ✅ Upload image first
+      const photoUrl = await uploadToCloudinary(form.profilePhotoFile);
+
+      // ✅ Send CLEAN JSON ONLY
       await api.post("/residents", {
-        ...form,
-        profilePhotoUrl: photoUrl,
         name: `${form.firstName} ${form.middleName} ${form.lastName}`.trim(),
         age: form.age ? Number(form.age) : null,
+        gender: form.gender,
+        roomNumber: form.roomNumber.trim(),
+        shortBio: form.shortBio || "",
+        profilePhotoUrl: photoUrl,
+        extraPhotos: [],
       });
 
-      setMessage("Resident Created Successfully!");
+      setMessage("Resident created successfully ✅");
 
       setTimeout(() => {
-        navigate("/admin/residents-list");
+        navigate("/admin/residents");
       }, 800);
-    } catch (err) {
-      console.error(err);
-      setMessage("Failed to create resident.");
-    }
 
-    setLoading(false);
+    } catch (err) {
+      console.error("Create resident failed:", err);
+      setMessage(
+        err?.response?.data?.message ||
+        "Failed to create resident."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   return (
     <AdminLayout>
