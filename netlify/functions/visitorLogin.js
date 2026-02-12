@@ -29,7 +29,8 @@ exports.handler = async (event) => {
       };
     }
 
-    const isValid = await bcrypt.compare(pin, record.pinHash);
+    const isValid = record.pin === pin;
+
 
     if (!isValid) {
       return {

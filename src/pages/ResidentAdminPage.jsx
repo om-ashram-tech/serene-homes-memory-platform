@@ -720,7 +720,7 @@ const profileFileRef = useRef(null);
             <button
               onClick={() => {
                 setShowSuccessPopup(false);
-                navigate("/admin/residents-list");
+                navigate("/admin/residents");
               }}
               style={{
                 background: "#b00000",
