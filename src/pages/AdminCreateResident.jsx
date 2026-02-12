@@ -24,6 +24,8 @@ export default function CreateResident() {
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
+
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -82,11 +84,8 @@ export default function CreateResident() {
         extraPhotos: [],
       });
 
-      setMessage("Resident created successfully ✅");
+      setShowSuccess(true);
 
-      setTimeout(() => {
-        navigate("/admin/residents");
-      }, 800);
 
     } catch (err) {
       console.error("Create resident failed:", err);
@@ -226,6 +225,29 @@ export default function CreateResident() {
           </form>
         </div>
       </div>
+      {showSuccess && (
+        <div style={styles.overlay}>
+          <div style={styles.popup}>
+            <h2 style={{ marginBottom: "16px", color: "#7a0000" }}>
+              Resident Created Successfully!
+            </h2>
+            <p style={{ marginBottom: "24px", color: "#555" }}>
+              The new resident profile has been added.
+            </p>
+            <button
+              style={styles.popupBtn}
+              onClick={() => {
+                setShowSuccess(false);
+                navigate("/admin/residents-list");
+
+              }}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
+
     </AdminLayout>
   );
 }
@@ -330,4 +352,37 @@ const styles = {
     color: "#7a0000",
     fontWeight: "600",
   },
+  overlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0,0,0,0.4)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1000,
+  },
+
+  popup: {
+    background: "white",
+    padding: "40px",
+    borderRadius: "20px",
+    boxShadow: "0 8px 30px rgba(0,0,0,0.2)",
+    textAlign: "center",
+    width: "400px",
+  },
+
+  popupBtn: {
+    background: "#7a0000",
+    color: "white",
+    padding: "12px 24px",
+    border: "none",
+    borderRadius: "12px",
+    fontSize: "16px",
+    fontWeight: "600",
+    cursor: "pointer",
+  },
+
 };

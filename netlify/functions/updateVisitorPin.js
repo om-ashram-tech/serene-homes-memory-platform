@@ -1,5 +1,4 @@
 // netlify/functions/updateVisitorPin.js
-const bcrypt = require("bcryptjs");
 const connectDB = require("./db");
 const VisitorPin = require("./models/VisitorPin");
 
@@ -16,25 +15,28 @@ exports.handler = async (event) => {
     if (!pin || !/^\d{4}$/.test(pin)) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ success: false, message: "PIN must be 4 digits" }),
+        body: JSON.stringify({
+          success: false,
+          message: "PIN must be 4 digits",
+        }),
       };
     }
 
-    const hash = await bcrypt.hash(pin, 10);
-
-    // Ensure only one active PIN exists
     await VisitorPin.deleteMany({});
-    await VisitorPin.create({ pinHash: hash });
+    await VisitorPin.create({ pin });
 
     return {
       statusCode: 200,
       body: JSON.stringify({ success: true }),
     };
   } catch (err) {
-    console.error("Update Visitor PIN error:", err);
+    console.error("Update PIN error:", err);
     return {
       statusCode: 500,
-      body: JSON.stringify({ success: false, message: "Server error" }),
+      body: JSON.stringify({
+        success: false,
+        message: "Server error",
+      }),
     };
   }
 };

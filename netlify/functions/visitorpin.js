@@ -1,25 +1,31 @@
 // netlify/functions/visitorPin.js
-const bcrypt = require("bcryptjs");
 const connectDB = require("./db");
 const VisitorPin = require("./models/VisitorPin");
 
 exports.handler = async (event) => {
-  await connectDB();
-
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
+  if (event.httpMethod !== "GET") {
+    return {
+      statusCode: 405,
+      body: "Method Not Allowed",
+    };
   }
 
-  const { pin } = JSON.parse(event.body);
+  try {
+    await connectDB();
 
-  const hash = await bcrypt.hash(pin, 10);
+    const pinDoc = await VisitorPin.findOne({});
 
-  // store single record (overwrite old)
-  await VisitorPin.deleteMany({});
-  await VisitorPin.create({ pinHash: hash });
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ success: true })
-  };
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        pin: pinDoc ? pinDoc.pin : null,
+      }),
+    };
+  } catch (err) {
+    console.error("Error fetching PIN:", err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ pin: null }),
+    };
+  }
 };

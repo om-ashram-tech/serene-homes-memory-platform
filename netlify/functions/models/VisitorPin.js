@@ -1,9 +1,10 @@
-// netlify/functions/models/VisitorPin.js
 const mongoose = require("mongoose");
 
-const VisitorPinSchema = new mongoose.Schema({
-  pinHash: { type: String, required: true },
-  updatedAt: { type: Date, default: Date.now }
+const visitorPinSchema = new mongoose.Schema({
+  pin: {
+    type: String,
+    required: true,
+  },
 });
 
-module.exports = mongoose.model("VisitorPin", VisitorPinSchema);
+module.exports = mongoose.model("VisitorPin", visitorPinSchema);

@@ -162,8 +162,8 @@ exports.handler = async (event) => {
       const updated = await Resident.findByIdAndUpdate(
         data.id,
         {
-          short_bio: data.shortBio,
-          profile_photo_url: data.profilePhotoUrl,
+          short_bio: data.short_bio,
+          profile_photo_url: data.profile_Photo_Url,
         },
         { new: true }
       );

@@ -1,6 +1,7 @@
 // src/pages/ResidentAdminPage.jsx
 import React, { useEffect, useState, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+
 import api from "../api.js";
 import Tabs from "../components/Tabs.jsx";
 import AdminLayout from "../layouts/AdminLayout";
@@ -20,6 +21,7 @@ const UPLOAD_PRESET = "anercvtl";
 const uploadToCloudinary = (file, onProgress) => {
   return new Promise((resolve, reject) => {
     const formData = new FormData();
+
     formData.append("file", file);
     formData.append("upload_preset", UPLOAD_PRESET);
 
@@ -58,6 +60,13 @@ const uploadToCloudinary = (file, onProgress) => {
 
 export default function ResidentAdminPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [selectedMediaId, setSelectedMediaId] = useState(null);
+  const [showProfileSuccessPopup, setShowProfileSuccessPopup] = useState(false);
+
+
 
   const fileInputRef = useRef(null);
 
@@ -154,7 +163,8 @@ const profileFileRef = useRef(null);
 
       setUploadProgress(0);
       await loadMedia();
-      setMsg("Media added successfully ✅");
+      setShowSuccessPopup(true);
+
     } catch (err) {
       console.error(err);
       setMsg("Failed to add media ❌");
@@ -186,22 +196,28 @@ const profileFileRef = useRef(null);
 
   // ---------------- DELETE MEDIA ----------------
 
-  const deleteMedia = async (mediaId) => {
-    if (!window.confirm("Delete this permanently?")) return;
-
+  const deleteMedia = (mediaId) => {
+    setSelectedMediaId(mediaId);
+    setShowDeletePopup(true);
+  };
+  if (!resident) return <p className="loading">Loading...</p>;
+  const confirmDeleteMedia = async () => {
     try {
       await api.delete("/media", {
-        data: { id: mediaId },
+        data: { id: selectedMediaId },
       });
 
       await loadMedia();
+      setShowDeletePopup(false);
+      setSelectedMediaId(null);
     } catch (err) {
       console.error("Delete failed", err);
-      alert("Failed to delete");
     }
   };
 
-  if (!resident) return <p className="loading">Loading...</p>;
+
+
+  
 
   // ---------------- DELETE STORY ----------------
   const deleteStory = async (storyId) => {
@@ -243,7 +259,8 @@ const profileFileRef = useRef(null);
       setProfileForm({ bio: profileForm.bio, file: null });
       if (profileFileRef.current) profileFileRef.current.value = "";
 
-      setMsg("Profile updated successfully ✅");
+      setShowProfileSuccessPopup(true);
+
     } catch (err) {
       console.error(err);
       setMsg("Failed to update profile ❌");
@@ -399,6 +416,7 @@ const profileFileRef = useRef(null);
                   </button>
                 </form>
               </div>
+
 
               <div style={{ marginTop: "24px" }}>
                 <h3>Existing Photos</h3>
@@ -669,6 +687,168 @@ const profileFileRef = useRef(null);
 
         </div>
       </section>
+      {showSuccessPopup && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+          }}
+        >
+          <div
+            style={{
+              background: "#fff",
+              padding: "30px 40px",
+              borderRadius: "12px",
+              width: "360px",
+              textAlign: "center",
+              boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+            }}
+          >
+            <h3 style={{ color: "#2e7d32", marginBottom: "10px" }}>
+               Media Added Successfully
+            </h3>
+
+            <p style={{ fontSize: "14px", marginBottom: "20px" }}>
+              The media has been uploaded successfully.
+            </p>
+
+            <button
+              onClick={() => {
+                setShowSuccessPopup(false);
+                navigate("/admin/residents-list");
+              }}
+              style={{
+                background: "#b00000",
+                color: "white",
+                border: "none",
+                padding: "8px 20px",
+                borderRadius: "6px",
+                cursor: "pointer",
+              }}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
+      {/* DELETE CONFIRM MODAL */}
+      {showDeletePopup && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+          }}
+        >
+          <div
+            style={{
+              background: "#fff",
+              padding: "30px 40px",
+              borderRadius: "12px",
+              width: "360px",
+              textAlign: "center",
+              boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+            }}
+          >
+            <h3 style={{ color: "#b00000", marginBottom: "10px" }}>
+              ⚠ Delete Permanently?
+            </h3>
+
+            <p style={{ fontSize: "14px", marginBottom: "20px" }}>
+              This action cannot be undone.
+            </p>
+
+            <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
+              <button
+                onClick={() => setShowDeletePopup(false)}
+                style={{
+                  background: "#ccc",
+                  border: "none",
+                  padding: "8px 20px",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                }}
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={confirmDeleteMedia}
+                style={{
+                  background: "#b00000",
+                  color: "white",
+                  border: "none",
+                  padding: "8px 20px",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                }}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* PROFILE SUCCESS MODAL */}
+      {showProfileSuccessPopup && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+          }}
+        >
+          <div
+            style={{
+              background: "#fff",
+              padding: "30px 40px",
+              borderRadius: "12px",
+              width: "360px",
+              textAlign: "center",
+              boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+            }}
+          >
+            <h3 style={{ color: "#2e7d32", marginBottom: "10px" }}>
+               Profile Updated Successfully
+            </h3>
+
+            <p style={{ fontSize: "14px", marginBottom: "20px" }}>
+              The profile information has been updated.
+            </p>
+
+            <button
+              onClick={() => setShowProfileSuccessPopup(false)}
+              style={{
+                background: "#b00000",
+                color: "white",
+                border: "none",
+                padding: "8px 20px",
+                borderRadius: "6px",
+                cursor: "pointer",
+              }}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
+
+
+
     </AdminLayout>
   );
 }

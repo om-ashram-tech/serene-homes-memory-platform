@@ -5,7 +5,7 @@ import AdminLayout from "../layouts/AdminLayout";
 
 export default function AdminDashboard() {
   const [totalResidents, setTotalResidents] = useState(0);
-  const [visitorPin, setVisitorPin] = useState(null);
+  const [visitorPin, setVisitorPin] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [pendingPin, setPendingPin] = useState(null);
   const [savingPin, setSavingPin] = useState(false);
@@ -13,18 +13,36 @@ export default function AdminDashboard() {
 
   const navigate = useNavigate();
 
+
   useEffect(() => {
-    const loadStats = async () => {
+    const loadPin = async () => {
       try {
-        const res = await api.get("/residents");
-        setTotalResidents(res.data.length);
+        const res = await api.get("/visitorpin");
+        console.log("PIN RESPONSE:", res.data); // DEBUG
+        setVisitorPin(res.data.pin || null);
       } catch (err) {
-        console.error("Failed to load residents count", err);
+        console.error("Failed to load PIN", err);
+        setVisitorPin(null);
       }
     };
 
-    loadStats();
+
+    const loadResidents = async () => {
+      try {
+        const residentsRes = await api.get("/residents");
+        setTotalResidents(residentsRes.data.length);
+      } catch (err) {
+        console.error("Failed to load residents", err);
+      }
+    };
+
+    loadPin();
+    loadResidents();
   }, []);
+
+
+
+
 
   const generatePin = () => {
     return Math.floor(1000 + Math.random() * 9000).toString();
@@ -46,6 +64,7 @@ export default function AdminDashboard() {
       await api.post("/updateVisitorPin", { pin: pendingPin });
 
       setVisitorPin(pendingPin);
+
       setPendingPin(null);
       setShowPopup(false);
     } catch (err) {
@@ -73,12 +92,13 @@ export default function AdminDashboard() {
           <h3>Visitor Access PIN</h3>
 
           {visitorPin ? (
-            <p style={{ fontSize: 22, fontWeight: 700, letterSpacing: 2 }}>
-              {visitorPin}
+            <p style={{ fontSize: 16, fontWeight: 600, color: "#2e7d32" }}>
+              Current PIN: {visitorPin}
             </p>
           ) : (
             <p style={{ color: "#777" }}>Not set</p>
           )}
+
 
           <button
             onClick={onChangePinClick}
