@@ -10,13 +10,13 @@ export default function VisitorLanding() {
 
   const handleLogout = () => {
     localStorage.removeItem("visitorAuth");
-    navigate("/visitor/login");
+    navigate("/visitor/login", { replace: true });
   };
 
   // 🔐 Visitor authentication check
   useEffect(() => {
     if (!localStorage.getItem("visitorAuth")) {
-      navigate("/visitor/login");
+      navigate("/visitor/login", { replace: true });
     }
   }, [navigate]);
 

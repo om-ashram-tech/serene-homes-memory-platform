@@ -14,8 +14,9 @@ const extractPublicId = (url) => {
 };
 
 /* ✅ Cloudinary */
-const CLOUD_NAME = "dgeoxo7mc";
-const UPLOAD_PRESET = "anercvtl";
+const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME;
+const UPLOAD_PRESET = import.meta.env.VITE_UPLOAD_PRESET;
+
 
 /* ✅ Upload with Progress (Image + Video) */
 const uploadToCloudinary = (file, onProgress) => {
