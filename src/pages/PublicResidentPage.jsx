@@ -79,12 +79,15 @@ export default function PublicResidentPage() {
         <h1 style={styles.name}>{resident.name}</h1>
 
         <p style={styles.meta}>
-          {resident.gender || "--"} • Room {resident.room_number || "--"}
+          {resident.gender || "--"}
+
+          {resident.year_of_admission && (
+            <> • Since {resident.year_of_admission}</>
+          )}
+
+          
         </p>
 
-        <div style={styles.bio}>
-          {resident.short_bio || "No biography available."}
-        </div>
       </div>
 
       {/* Tabs */}

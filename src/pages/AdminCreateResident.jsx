@@ -3,9 +3,10 @@ import api from "../api";
 import AdminLayout from "../layouts/AdminLayout";
 import { useNavigate } from "react-router-dom";
 
-/* ✅ Cloudinary Config */
-const CLOUD_NAME = "dgeoxo7mc";
-const UPLOAD_PRESET = "anercvtl";
+/* ✅ Cloudinary Config (kept as you wrote) */
+const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME;
+const UPLOAD_PRESET = import.meta.env.VITE_UPLOAD_PRESET;
+
 
 export default function CreateResident() {
   const navigate = useNavigate();
@@ -17,15 +18,16 @@ export default function CreateResident() {
     age: "",
     gender: "",
     roomNumber: "",
+    yearOfAdmission: "",     // ✅ NEW
+    catchyPhrase: "",        // ✅ NEW
     shortBio: "",
     profilePhotoUrl: "",
-    profilePhotoFile: null, // ✅ new
+    profilePhotoFile: null,
   });
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
-
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -57,8 +59,13 @@ export default function CreateResident() {
     setMessage("");
 
     try {
-      // ✅ Basic validation
-      if (!form.firstName || !form.lastName || !form.roomNumber) {
+      // ✅ Required validation
+      if (
+        !form.firstName.trim() ||
+        !form.lastName.trim() ||
+        !form.gender ||
+        !form.catchyPhrase.trim()
+      ) {
         setMessage("Please fill all required fields.");
         setLoading(false);
         return;
@@ -70,22 +77,48 @@ export default function CreateResident() {
         return;
       }
 
-      // ✅ Upload image first
+      // ✅ Validate Year
+      if (form.yearOfAdmission) {
+        const year = Number(form.yearOfAdmission);
+        const currentYear = new Date().getFullYear();
+
+        if (year < 1900 || year > currentYear) {
+          setMessage("Please enter a valid admission year.");
+          setLoading(false);
+          return;
+        }
+      }
+
+      // ✅ Upload image
       const photoUrl = await uploadToCloudinary(form.profilePhotoFile);
 
-      // ✅ Send CLEAN JSON ONLY
+      // ✅ Clean full name properly
+      const fullName = [
+        form.firstName,
+        form.middleName,
+        form.lastName,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .trim();
+
+      // ✅ SEND EXACT FIELD NAMES YOUR BACKEND EXPECTS
       await api.post("/residents", {
-        name: `${form.firstName} ${form.middleName} ${form.lastName}`.trim(),
+        name: fullName,
         age: form.age ? Number(form.age) : null,
         gender: form.gender,
-        roomNumber: form.roomNumber.trim(),
         shortBio: form.shortBio || "",
+        roomNumber: form.roomNumber || "",
+        yearOfAdmission: form.yearOfAdmission
+          ? Number(form.yearOfAdmission)
+          : null,
+        catchyPhrase: form.catchyPhrase || "",
         profilePhotoUrl: photoUrl,
         extraPhotos: [],
       });
 
-      setShowSuccess(true);
 
+      setShowSuccess(true);
 
     } catch (err) {
       console.error("Create resident failed:", err);
@@ -99,6 +132,7 @@ export default function CreateResident() {
   };
 
 
+
   return (
     <AdminLayout>
       <div style={styles.page}>
@@ -109,6 +143,7 @@ export default function CreateResident() {
           </p>
 
           <form onSubmit={submit} style={styles.form}>
+            
             {/* NAME ROW */}
             <div style={styles.nameRow}>
               <div style={styles.field}>
@@ -162,11 +197,12 @@ export default function CreateResident() {
               </div>
 
               <div style={styles.field}>
-                <label style={styles.label}>Gender</label>
+                <label style={styles.label}>Gender*</label>
                 <select
                   name="gender"
                   value={form.gender}
                   onChange={handleChange}
+                  required
                   style={styles.select}
                 >
                   <option value="">Select gender</option>
@@ -177,13 +213,35 @@ export default function CreateResident() {
               </div>
             </div>
 
-            {/* ROOM NUMBER */}
-            <label style={styles.label}>Room Number</label>
+            {/* ROOM NUMBER (kept)
+            <label style={styles.label}>Room Number *</label>
             <input
               name="roomNumber"
               value={form.roomNumber}
               onChange={handleChange}
               placeholder="Example: 204"
+              style={styles.input}
+            /> */}
+
+            {/* YEAR OF ADMISSION */}
+            <label style={styles.label}>Year of Admission</label>
+            <input
+              type="number"
+              name="yearOfAdmission"
+              value={form.yearOfAdmission}
+              onChange={handleChange}
+              placeholder="Example: 2022"
+              style={styles.input}
+            />
+
+            {/* CATCHY PHRASE */}
+            <label style={styles.label}>Catchy Phrase</label>
+            <input
+              name="catchyPhrase"
+              value={form.catchyPhrase}
+              onChange={handleChange}
+              required
+              placeholder="Example: A heart full of wisdom and kindness"
               style={styles.input}
             />
 
@@ -197,7 +255,7 @@ export default function CreateResident() {
               style={styles.textarea}
             />
 
-            {/* PROFILE PHOTO UPLOAD */}
+            {/* PROFILE PHOTO */}
             <label style={styles.label}>Profile Photo *</label>
             <input
               type="file"
@@ -208,7 +266,6 @@ export default function CreateResident() {
               }
             />
 
-            {/* PREVIEW */}
             {form.profilePhotoFile && (
               <img
                 src={URL.createObjectURL(form.profilePhotoFile)}
@@ -225,6 +282,7 @@ export default function CreateResident() {
           </form>
         </div>
       </div>
+
       {showSuccess && (
         <div style={styles.overlay}>
           <div style={styles.popup}>
@@ -239,7 +297,6 @@ export default function CreateResident() {
               onClick={() => {
                 setShowSuccess(false);
                 navigate("/admin/residents-list");
-
               }}
             >
               OK
@@ -247,10 +304,10 @@ export default function CreateResident() {
           </div>
         </div>
       )}
-
     </AdminLayout>
   );
 }
+
 
 /* ------------------------- STYLES ------------------------- */
 
@@ -270,7 +327,7 @@ const styles = {
     margin: 0,
     fontSize: "28px",
     fontWeight: "700",
-    color: "#7a0000",
+    color: "#072629",
   },
   subtitle: {
     marginTop: "8px",

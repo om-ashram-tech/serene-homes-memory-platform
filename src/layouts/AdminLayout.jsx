@@ -1,34 +1,70 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "../pages/dashboard.css";
+import logo from "../assets/logo.png";
 
 export default function AdminLayout({ children }) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const logout = () => {
     localStorage.removeItem("token");
     navigate("/admin/login");
   };
 
+  const navItem = (path, icon, label) => {
+    const isActive = location.pathname === path;
+
+    return (
+      <button
+        className={`sidebar-btn ${isActive ? "active" : ""}`}
+        onClick={() => navigate(path)}
+      >
+        <span className="icon">{icon}</span>
+        {label}
+      </button>
+    );
+  };
+
   return (
     <div className="page-wrapper">
-      {/* ADMIN HEADER */}
-      <header className="top-header">
-        <h2>OM ASHRAM — Admin Panel</h2>
-        <button className="logout-btn" onClick={logout}>Logout</button>
+
+      {/* HEADER */}
+      <header className="admin-navbar">
+        <div className="admin-navbar-inner">
+
+          <div className="admin-brand">
+            <a 
+  href="https://omashram.org/" 
+  target="_blank" 
+  rel="noopener noreferrer"
+>
+  <img 
+    src={logo} 
+    alt="OMASHRAM TRUST" 
+    className="admin-logo" 
+  />
+</a>
+
+            
+          </div>
+
+          <button className="logout-btn" onClick={logout}>
+            Logout
+          </button>
+
+        </div>
       </header>
 
       {/* MAIN LAYOUT */}
       <div className="layout-container">
 
-        {/* SIDEBAR */}
         <aside className="sidebar">
-          <button onClick={() => navigate("/admin/dashboard")}>🏠 Dashboard</button>
-          <button onClick={() => navigate("/admin/residents-list")}>👥 Residents</button>
-          <button onClick={() => navigate("/admin/create-resident")}>➕ Add Resident</button>
+          {navItem("/admin/dashboard", "🏠", "Dashboard")}
+          {navItem("/admin/residents-list", "👥", "Residents")}
+          {navItem("/admin/create-resident", "➕", "Add Resident")}
         </aside>
 
-        {/* PAGE CONTENT */}
         <main className="content">
           <div className="content-inner">
             {children}

@@ -5,13 +5,19 @@ const ResidentSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
 
-    age: Number,
+    age: { type: Number, default: null },
 
     gender: { type: String, default: "" },
 
     short_bio: { type: String, default: "" },
 
+    // ✅ NEW FIELD — Catchy Phrase
+    catchy_phrase: { type: String, default: "" },
+
     room_number: { type: String, default: "" },
+
+    // ✅ NEW FIELD — Year of Admission
+    year_of_admission: { type: Number, default: null },
 
     profile_photo_url: { type: String, default: "" },
 
@@ -22,5 +28,7 @@ const ResidentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports =
-  mongoose.models.Resident || mongoose.model("Resident", ResidentSchema);
+
+
+module.exports = mongoose.model("Resident", ResidentSchema);
+

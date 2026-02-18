@@ -39,24 +39,48 @@ a:hover {
   flex-direction: column;
 }
 
-.header {
+/* =================================
+   🔥 PUBLIC NAVBAR (MATCH VISITOR)
+================================= */
+.public-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  padding: 18px 60px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  z-index: 1000;
+}
+
+.public-navbar-inner {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 24px;
-  background: linear-gradient(90deg, #fbe0d8, #f7f4ff);
-  border-bottom: 1px solid var(--border);
 }
 
-.brand-title {
-  font-weight: 700;
-  font-size: 1.2rem;
+.public-brand {
+  display: flex;
+  align-items: center;
 }
 
-.brand-subtitle {
-  display: block;
-  font-size: 0.8rem;
-  color: var(--muted);
+.public-logo {
+  width: 180px;
+  height: auto;
+  object-fit: contain;
+}
+
+.public-nav-links a {
+  margin-left: 28px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #7a0000;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.public-nav-links a:hover {
+  color: #990000;
 }
 
 .nav-links a {
@@ -66,10 +90,11 @@ a:hover {
 
 .main {
   flex: 1;
-  padding: 24px 16px 40px;
+  padding: 120px 16px 40px; /* push below fixed navbar */
   max-width: 1100px;
   margin: 0 auto;
 }
+
 
 .footer {
   text-align: center;

@@ -13,19 +13,17 @@ export default function AdminDashboard() {
 
   const navigate = useNavigate();
 
-
   useEffect(() => {
     const loadPin = async () => {
       try {
         const res = await api.get("/visitorpin");
-        console.log("PIN RESPONSE:", res.data); // DEBUG
+        console.log("PIN RESPONSE:", res.data);
         setVisitorPin(res.data.pin || null);
       } catch (err) {
         console.error("Failed to load PIN", err);
         setVisitorPin(null);
       }
     };
-
 
     const loadResidents = async () => {
       try {
@@ -39,10 +37,6 @@ export default function AdminDashboard() {
     loadPin();
     loadResidents();
   }, []);
-
-
-
-
 
   const generatePin = () => {
     return Math.floor(1000 + Math.random() * 9000).toString();
@@ -59,12 +53,8 @@ export default function AdminDashboard() {
     try {
       setSavingPin(true);
       setPinError("");
-
-      // 🔗 REAL BACKEND UPDATE
       await api.post("/updateVisitorPin", { pin: pendingPin });
-
       setVisitorPin(pendingPin);
-
       setPendingPin(null);
       setShowPopup(false);
     } catch (err) {
@@ -83,22 +73,26 @@ export default function AdminDashboard() {
 
   return (
     <AdminLayout>
-      <h1>Welcome, Admin</h1>
+      <h1>
+        Welcome, <span style={{ color: "#7a0000" }}>Admin</span>
+      </h1>
+
       <p className="subtext">Manage residents and their memory spaces</p>
 
-      {/* Visitor PIN Card */}
       <div className="stats-grid" style={{ marginBottom: 24 }}>
         <div className="stat-card">
-          <h3>Visitor Access PIN</h3>
+          <h3 style={{ fontFamily: "inherit" ,color: "#2073d1"}}>VISITOR ACCESS PIN</h3>
 
           {visitorPin ? (
-            <p style={{ fontSize: 16, fontWeight: 600, color: "#2e7d32" }}>
-              Current PIN: {visitorPin}
+            <p style={{ fontSize: 16, fontWeight: 600, fontFamily: "sans-serif"}}>
+              Current Pin:{" "}
+              <span style={{ color: "#2e7d32", fontFamily: "inherit" }}>
+                {visitorPin}
+              </span>
             </p>
           ) : (
-            <p style={{ color: "#777" }}>Not set</p>
+            <p style={{ color: "#777", fontFamily: "inherit" }}>Not set</p>
           )}
-
 
           <button
             onClick={onChangePinClick}
@@ -111,6 +105,7 @@ export default function AdminDashboard() {
               color: "#fff",
               fontWeight: 600,
               cursor: "pointer",
+              fontFamily: "inherit", // ✅ same font
             }}
           >
             Change PIN
@@ -118,7 +113,6 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Stats Grid */}
       <div className="stats-grid">
         <div
           className="stat-card clickable"
@@ -133,18 +127,12 @@ export default function AdminDashboard() {
           <p>{totalResidents}</p>
         </div>
 
-        {/* <div className="stat-card">
-          <h3>QR Scans Today</h3>
-          <p>-nil-</p>
-        </div> */}
-
         <div className="stat-card">
           <h3>Staff Accounts</h3>
           <p>1</p>
         </div>
       </div>
 
-      {/* Popup Modal */}
       {showPopup && (
         <div style={overlayStyle}>
           <div style={popupStyle}>
@@ -224,7 +212,6 @@ const confirmBtnStyle = {
   color: "#fff",
   fontWeight: 600,
   cursor: "pointer",
-  opacity: 1,
 };
 
 const cancelBtnStyle = {

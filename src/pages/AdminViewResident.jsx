@@ -76,11 +76,26 @@ export default function AdminViewResident() {
     );
 
   // Subline text
+  // Subline text
   const infoBits = [];
+
   if (resident.age) infoBits.push(`Age ${resident.age}`);
-  if (resident.gender) infoBits.push(resident.gender);
-  if (resident.room_number) infoBits.push(`Room ${resident.room_number}`);
+
+  if (resident.gender) {
+    let genderText = resident.gender;
+
+    // Add year of admission next to gender
+    if (resident.year_of_admission) {
+      genderText += ` • Year of Admission : ${resident.year_of_admission}`;
+    }
+
+    infoBits.push(genderText);
+  }
+
+ 
+
   const infoLine = infoBits.join(" • ");
+
 
   // ✅ COUNTS
   const photosCount = media.filter((m) => m.type === "photo").length;

@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
+import logo from "../assets/logo.png";
 
 export default function Layout({ children }) {
   const location = useLocation();
@@ -8,28 +9,33 @@ export default function Layout({ children }) {
   return (
     <div className="app-root">
 
-      {/* SHOW ONLY ON PUBLIC PAGES */}
+      {/* PUBLIC HEADER ONLY */}
       {!isAdmin && (
-        <header className="header">
-          <div className="brand">
-            <span className="brand-title">Serene Homes</span>
-            <span className="brand-subtitle">Private Memory Spaces</span>
+        <header className="public-navbar">
+          <div className="public-navbar-inner">
+
+            {/* LEFT: Logo */}
+            <div className="public-brand">
+              <img src={logo} alt="OMASHRAM TRUST" className="public-logo" />
+            </div>
+
+            {/* RIGHT: Links */}
+            <nav className="public-nav-links">
+              <Link to="/">Home</Link>
+              <Link to="/admin/login">Admin Login</Link>
+            </nav>
+
           </div>
-          <nav className="nav-links">
-            <Link to="/">Home</Link>
-            <Link to="/admin/login">Admin Login</Link>
-          </nav>
         </header>
       )}
 
       <main className="main">{children}</main>
 
-      {/* FOOTER ONLY FOR PUBLIC */}
-      {!isAdmin && (
+      {/* {!isAdmin && (
         <footer className="footer">
-          Serene Homes &copy; {new Date().getFullYear()} · Caring with dignity.
+          OMashram &copy; {new Date().getFullYear()} · Caring with dignity.
         </footer>
-      )}
+      )} */}
 
     </div>
   );

@@ -77,9 +77,9 @@ export default function AdminLogin() {
             </button>
           </form>
 
-          <p style={styles.footer}>
+          {/* <p style={styles.footer}>
             © {new Date().getFullYear()} Serene Homes
-          </p>
+          </p> */}
         </div>
       </div>
 

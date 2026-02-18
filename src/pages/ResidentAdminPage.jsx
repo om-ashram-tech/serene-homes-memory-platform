@@ -92,6 +92,7 @@ export default function ResidentAdminPage() {
   });
   const [profileForm, setProfileForm] = useState({
     bio: "",
+    catchyPhrase: "",
     file: null,
   });
 
@@ -108,6 +109,7 @@ const profileFileRef = useRef(null);
     setProfileForm((prev) => ({
       ...prev,
       bio: found?.short_bio || "",
+      catchyPhrase: found?.catchy_phrase || "",
     }));
   };
 
@@ -250,6 +252,7 @@ const profileFileRef = useRef(null);
       await api.put("/residents", {
         id: resident._id,
         short_bio: profileForm.bio,
+        catchy_phrase: profileForm.catchyPhrase,
         profile_photo_url: uploaded
           ? uploaded.url
           : resident.profile_photo_url,
@@ -315,6 +318,19 @@ const profileFileRef = useRef(null);
                       setProfileForm({ ...profileForm, bio: e.target.value })
                     }
                   />
+                  <label>Catchy Phrase</label>
+                    <input
+                      type="text"
+                      value={profileForm.catchyPhrase}
+                      onChange={(e) =>
+                        setProfileForm({
+                          ...profileForm,
+                          catchyPhrase: e.target.value,
+                        })
+                      }
+                      placeholder="Example: A heart full of wisdom and kindness"
+                    />
+
 
                   <button className="primary-btn" type="submit">
                     Update Profile
@@ -337,6 +353,18 @@ const profileFileRef = useRef(null);
                       marginBottom: "10px",
                     }}
                   />
+                )}
+                {/* ✅ ADD THIS */}
+                {resident.catchy_phrase && (
+                  <p
+                    style={{
+                      fontStyle: "italic",
+                      color: "#7a0000",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    "{resident.catchy_phrase}"
+                  </p>
                 )}
 
                 <p>{resident.short_bio || "No bio added yet."}</p>

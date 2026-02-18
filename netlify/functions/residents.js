@@ -2,7 +2,7 @@ const connectDB = require("./db");
 const Resident = require("./models/Resident");
 
 exports.handler = async (event) => {
-  // ✅ Safe DB connection (prevents 502 crashes)
+  // ✅ Safe DB connection
   try {
     await connectDB();
   } catch (err) {
@@ -16,26 +16,32 @@ exports.handler = async (event) => {
   const method = event.httpMethod;
   const qs = event.queryStringParameters || {};
 
-  // -------------------------------
+  // ======================================================
   // CREATE RESIDENT
-  // -------------------------------
+  // ======================================================
   if (method === "POST") {
     try {
       const data = JSON.parse(event.body);
+      console.log("Incoming Data:", data);
 
-      // ✅ Simple Netlify-safe token (no uuid)
       const publicToken = Math.random().toString(36).substring(2, 10);
 
-      const resident = await Resident.create({
+      const resident = new Resident({
         name: data.name,
-        age: data.age,
-        gender: data.gender,
-        short_bio: data.shortBio,
-        room_number: data.roomNumber,
+        age: data.age || null,
+        gender: data.gender || "",
+        short_bio: data.shortBio || "",
+        room_number: data.roomNumber || "",
+        year_of_admission: data.yearOfAdmission || null,
+        catchy_phrase: data.catchyPhrase || "",
         profile_photo_url: data.profilePhotoUrl || "",
         extra_photos: data.extraPhotos || [],
         public_token: publicToken,
       });
+
+      console.log("Saving Resident Object:", resident);
+
+      await resident.save();
 
       return {
         statusCode: 200,
@@ -50,9 +56,11 @@ exports.handler = async (event) => {
     }
   }
 
-  // -------------------------------
+
+
+  // ======================================================
   // GET ALL RESIDENTS
-  // -------------------------------
+  // ======================================================
   if (method === "GET" && !qs.id && !qs.token) {
     try {
       const all = await Resident.find().lean();
@@ -69,9 +77,9 @@ exports.handler = async (event) => {
     }
   }
 
-  // -------------------------------
+  // ======================================================
   // GET RESIDENT BY ID
-  // -------------------------------
+  // ======================================================
   if (method === "GET" && qs.id) {
     try {
       const resident = await Resident.findById(qs.id).lean();
@@ -96,9 +104,9 @@ exports.handler = async (event) => {
     }
   }
 
-  // -------------------------------
-  // GET RESIDENT BY PUBLIC TOKEN (QR)
-  // -------------------------------
+  // ======================================================
+  // GET RESIDENT BY PUBLIC TOKEN
+  // ======================================================
   if (method === "GET" && qs.token) {
     try {
       const resident = await Resident.findOne({
@@ -125,9 +133,9 @@ exports.handler = async (event) => {
     }
   }
 
-  // -------------------------------
+  // ======================================================
   // DELETE RESIDENT
-  // -------------------------------
+  // ======================================================
   if (method === "DELETE" && qs.id) {
     try {
       const deleted = await Resident.findByIdAndDelete(qs.id);
@@ -152,9 +160,9 @@ exports.handler = async (event) => {
     }
   }
 
-  // -------------------------------
-  // UPDATE BIO + PROFILE PHOTO
-  // -------------------------------
+  // ======================================================
+  // UPDATE PROFILE
+  // ======================================================
   if (method === "PUT") {
     try {
       const data = JSON.parse(event.body);
@@ -162,8 +170,10 @@ exports.handler = async (event) => {
       const updated = await Resident.findByIdAndUpdate(
         data.id,
         {
-          short_bio: data.short_bio,
-          profile_photo_url: data.profile_Photo_Url,
+          short_bio: data.short_bio || "",
+          profile_photo_url: data.profile_photo_url || "",
+          catchy_phrase: data.catchy_phrase || "",            // ✅ ADDED
+          year_of_admission: data.year_of_admission || null,  // ✅ ADDED
         },
         { new: true }
       );
@@ -188,9 +198,9 @@ exports.handler = async (event) => {
     }
   }
 
-  // -------------------------------
+  // ======================================================
   // FALLBACK
-  // -------------------------------
+  // ======================================================
   return {
     statusCode: 405,
     body: JSON.stringify({ message: "Method Not Allowed" }),

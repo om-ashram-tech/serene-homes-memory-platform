@@ -70,8 +70,20 @@ export default function ResidentTempPage() {
         />
         <h2>{resident.name}</h2>
         <p className="meta">
-          {resident.gender} • Room {resident.room_number}
+          {resident.age && <>Age {resident.age}</>}
+          
+          {resident.age && resident.gender && " • "}
+          
+          {resident.gender}
+          
+          {(resident.age || resident.gender) && resident.year_of_admission && " • "}
+          
+          {resident.year_of_admission && (
+            <>Year of Admission :  {resident.year_of_admission}</>
+          )}
         </p>
+
+
       </div>
 
       {/* About */}
