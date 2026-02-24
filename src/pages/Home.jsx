@@ -98,11 +98,12 @@ export default function Home() {
         </h1>
 
         <p style={{ fontSize: "clamp(14px, 4vw, 16px)", lineHeight: "1.6", color: "#333" }}>
-          Serene Homes is a warm and caring old age home where every resident's
-          life story is cherished. Each resident has a private memory space with
-          photos, videos, and written memories, accessible only to their family
-          and close friends.
-        </p>
+          Omashram Trust is a compassionate and dedicated old age care home committed to providing a safe, peaceful, and dignified environment for elderly individuals. We believe that every life story deserves respect, love, and care, especially in the later stages of life.
+
+          Our mission is to create a nurturing space where residents feel valued, supported, and emotionally secure. With round-the-clock assistance, medical support, and a warm community atmosphere, we ensure that every resident experiences comfort, companionship, and personalized attention.
+
+          At Omashram, we are not just caregivers - we are a family. We strive to uphold the values of empathy, respect, and holistic well-being, helping our residents live their golden years with grace, happiness, and dignity.
+          </p>
 
         <p style={{ fontSize: "clamp(14px, 4vw, 16px)", lineHeight: "1.6", color: "#333" }}>
           For visitors and family members: please use the QR code provided by
